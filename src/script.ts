@@ -1,4 +1,4 @@
-import { getNormalColorFn, getColorWithModulo } from "./colorFn";
+import { getNormalColorFn, getColorWithModulo, getColorFn } from "./colorFn";
 import { initialMandelbrotParams } from "./data";
 import { createCanvas, drawMandelbrot, Mandelbrot, MandelbrotParams, zoom } from "./mandelbrot";
 import { enterFullscreen } from "./utils";
@@ -20,15 +20,10 @@ const activateModuloColor = document.getElementById("activatModuloColor") as HTM
 const mirrorCanvas = document.getElementById("mirrorCanvas")
 
 let currentZoomFactor = 1.2
-const getBackgroundColor =()=> {return {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}}
+let backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
 let currentMandelbrot:Mandelbrot = drawMandelbrot({
   ...initialMandelbrotParams,
-  getColorFn: (interations:number, maxIterations:number)=>{ 
-    return getNormalColorFn(
-    interations,
-    maxIterations,
-    getBackgroundColor()
-  )}
+  getColorFn: getNormalColorFn(backgroundColor)
 }, canvas)
 
 function updateHtml(newMandelbrot: Mandelbrot){
@@ -79,19 +74,13 @@ activateModuloColor?.addEventListener('change', function() {
     blue.value = 9+""
     green.value = 7+""
     changeMandelbrotParams({ getColorFn: 
-      (interations: number, maxIterations: number)=>{ return getColorWithModulo(interations,maxIterations,3,7,9, getBackgroundColor())}
+      getColorWithModulo(3,7,9, backgroundColor)
     });
   } else {
     red.value = 0+""
     blue.value = 0+""
     green.value = 0+""
-    changeMandelbrotParams({ getColorFn: (iterations: number, maxIterations: number) => {
-      return getNormalColorFn(
-        iterations,
-        maxIterations,
-        getBackgroundColor()
-      );
-    },});
+    changeMandelbrotParams(backgroundColor)
   }
 });
 
@@ -111,16 +100,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     changeMandelbrotParams({
-      getColorFn: (iterations: number, maxIterations: number) => {
-        return getColorWithModulo(
-          iterations,
-          maxIterations,
-          +red.value,
-          +green.value,
-          +blue.value,
-          getBackgroundColor()
-        );
-      },
+      getColorFn: getColorWithModulo(+red.value, +green.value,+blue.value,backgroundColor)
     });
   }
 };
@@ -129,7 +109,8 @@ const handleBackGroundColorChange = (event: KeyboardEvent) => {
   if (event.key === "Enter") {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
-    changeMandelbrotParams(null)
+    backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
+    changeMandelbrotParams({getColorFn:getNormalColorFn(backgroundColor) })
   }
 };
 
