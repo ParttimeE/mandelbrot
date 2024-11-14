@@ -57,7 +57,7 @@ maxIterations?.addEventListener("keypress", (event: KeyboardEvent) => {
   if (event.key === "Enter") {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
-    changeMandelbrotParams({ maxIterations: target.value });
+    changeMandelbrotParams({ maxIterations: +target.value });
   }
 })
 
@@ -77,10 +77,8 @@ activateModuloColor?.addEventListener('change', function() {
     currentColorFunction = getColorFnWithBackground(getModuloColorCalculation(3,7,9))
     changeMandelbrotParams({ getColorFn: currentColorFunction(backgroundColor)});
   } else {
-    red.value = 0+""
-    blue.value = 0+""
-    green.value = 0+""
-    changeMandelbrotParams(backgroundColor)
+    currentColorFunction = getColorFnWithBackground(normalColorCalculation)
+      changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
   }
 });
 
@@ -110,7 +108,7 @@ const handleBackGroundColorChange = (event: KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
-    changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor) })
+    changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
   }
 };
 

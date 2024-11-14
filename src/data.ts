@@ -2,7 +2,7 @@ import { normalColorCalculation } from "./colorFn";
 import { MandelbrotParams } from "./mandelbrot";
 
 export const initialMandelbrotParams= {
-  maxIterations: 50,
+  maxIterations: 200,
   maxRealPart: 1,
   minRealPart: -2,
   maxImaginaryPart: 1.5,
