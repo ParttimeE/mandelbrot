@@ -1,4 +1,4 @@
-import { getNormalColorFn, getColorWithModulo, getColorFn } from "./colorFn";
+import { normalColorCalculation, getModuloColorCalculation, getColorFnWithBackground } from "./colorFn";
 import { initialMandelbrotParams } from "./data";
 import { createCanvas, drawMandelbrot, Mandelbrot, MandelbrotParams, zoom } from "./mandelbrot";
 import { enterFullscreen } from "./utils";
@@ -21,9 +21,10 @@ const mirrorCanvas = document.getElementById("mirrorCanvas")
 
 let currentZoomFactor = 1.2
 let backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
+let currentColorFunction = getColorFnWithBackground(normalColorCalculation)
 let currentMandelbrot:Mandelbrot = drawMandelbrot({
   ...initialMandelbrotParams,
-  getColorFn: getNormalColorFn(backgroundColor)
+  getColorFn: currentColorFunction(backgroundColor)
 }, canvas)
 
 function updateHtml(newMandelbrot: Mandelbrot){
@@ -73,9 +74,8 @@ activateModuloColor?.addEventListener('change', function() {
     red.value = 3+""
     blue.value = 9+""
     green.value = 7+""
-    changeMandelbrotParams({ getColorFn: 
-      getColorWithModulo(3,7,9, backgroundColor)
-    });
+    currentColorFunction = getColorFnWithBackground(getModuloColorCalculation(3,7,9))
+    changeMandelbrotParams({ getColorFn: currentColorFunction(backgroundColor)});
   } else {
     red.value = 0+""
     blue.value = 0+""
@@ -100,7 +100,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     changeMandelbrotParams({
-      getColorFn: getColorWithModulo(+red.value, +green.value,+blue.value,backgroundColor)
+      getColorFn: getModuloColorCalculation(+red.value, +green.value,+blue.value)
     });
   }
 };
@@ -110,7 +110,7 @@ const handleBackGroundColorChange = (event: KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
-    changeMandelbrotParams({getColorFn:getNormalColorFn(backgroundColor) })
+    changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor) })
   }
 };
 

@@ -1,4 +1,4 @@
-import { getNormalColorFn } from "./colorFn";
+import { normalColorCalculation } from "./colorFn";
 import { MandelbrotParams } from "./mandelbrot";
 
 export const initialMandelbrotParams= {
