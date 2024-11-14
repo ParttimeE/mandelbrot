@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas und Controller</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="controller-container">
+    <label for="MaxInterations">MaxInterations</label>
+    <input id="MaxInterations" type="number" step="50" min="0">
+
+    <label for="MaxReal">MaxReal</label>
+    <input id="MaxReal" type="number" readonly>
+
+    <label for="MinReal">MinReal</label>
+    <input id="MinReal" type="number" readonly>
+
+    <label for="MaxImg">MaxImg</label>
+    <input id="MaxImg" readonly type="number">
+
+    <label for="MinImg">MinImg</label>
+    <input id="MinImg" readonly type="number">
+    
+    <label for="zoomFactor" min="0">Zoom Factor</label>
+    <input id="zoomFactor" type="number" value="1.2">
+
+    <label for="backgroundConfigurations">Background Color</label>
+    <div id="backgroundConfigurations" classname="backgroundConfigurations">
+
+      
+      <input id="backgroundRed" type="number" min="0" max="255" value="0">
+      <label for="backgroundRed">R</label>
+      
+      <input id="backgroundGreen" type="number" min="0" max="255" value="0">
+      <label for="backgroundGreen">G</label>
+      
+      <input id="backgroundBlue" type="number" min="0" max="255" value="0">
+      <label for="backgroundBlue">B</label>
+     
+    </div>
+
+    <div id="configureModuloColor">
+        <label for="activatModuloColor">Modulo Color Function</label>
+        <input type="checkbox" id="activatModuloColor">
+        <label for="red">Modulo Divider red</label>
+        <input id="red" type="number">
+
+        <label for="green">Modulo Divider green</label>
+        <input id="green" type="number">
+
+        <label for="blue">Modulo Divider blue</label>
+        <input id="blue" type="number">
+    </div>
+    <button id="mirrorCanvas">Mirror</button>
+  </div>
+</body>
+<script type="module" src="script.ts"></script>
+</html>

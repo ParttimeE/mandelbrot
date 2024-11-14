@@ -1,0 +1,78 @@
+html, body {
+  height: 100%; /* Der gesamte Bildschirmbereich wird genutzt */
+  width: 100%;
+  margin: 0;  
+  overflow-y: hidden;
+}
+
+body {
+  display: flex;
+  height: 100%; /* Setzt die Höhe auf 100% */
+  justify-content: flex-start; /* Controller bleibt am linken Rand */
+  align-items: center; /* Zentriert den Canvas vertikal */
+  background-color: black;
+  overflow-y: hidden;
+}
+
+.controller-container {
+  width: 20px; 
+  height: 100%; 
+  background-color: rgb(57, 55, 55);
+  position: fixed; 
+  top: 0;
+  left: 0;
+  justify-content: space-around;
+  z-index: 10;
+}
+
+.controller-container:hover {
+  width: 200px; 
+}
+
+.controller-container input {
+  background-color: #FF6347;
+  padding: 10px;
+  margin: 5px;
+}
+.controller-container > input {
+  visibility: hidden; 
+}
+.controller-container > button {
+  visibility: hidden; 
+}
+.controller-container label {
+  color:white
+}
+.controller-container label,
+.controller-container div{
+  visibility: hidden;
+}
+.controller-container:hover input{
+  visibility: visible;
+}
+
+.controller-container:hover label{
+  visibility: visible;
+}
+.controller-container:hover button{
+  visibility: visible;
+}
+
+
+
+.canvas {
+  position: absolute;
+  top: 50%; /* Positioniert das Canvas in der Mitte des Bildschirms (vertikal) */
+  left: 50%; /* Positioniert das Canvas in der Mitte des Bildschirms (horizontal) */
+  transform: translate(-50%, -50%); /* Verschiebt das Canvas, sodass die Mitte im Mittelpunkt des Bildschirms ist */
+  background-color: gray; /* Damit der Canvas sichtbar ist */
+  cursor:crosshair
+}
+
+.backgroundConfigurations{
+  display: inline;
+  background-color: rgba(30, 210, 42, 0.432);
+  z-index: 20;
+  color:blue
+}
+
