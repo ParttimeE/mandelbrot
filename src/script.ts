@@ -1,8 +1,7 @@
-import { isCallExpression } from "../../../node_modules/typescript/lib/typescript";
 import { normalColorCalculation, getModuloColorCalculation, getColorFnWithBackground } from "./colorFn";
 import { initialMandelbrotParams } from "./data";
 import { createCanvas, drawMandelbrot, Mandelbrot, MandelbrotParams, zoom } from "./mandelbrot";
-import { delay, doXTimesEveryYms, enterFullscreen } from "./utils";
+import { doXTimesEveryYms, enterFullscreen } from "./utils";
 
 const canvas = createCanvas(1000, 1000)
 const red = document.getElementById("red") as HTMLInputElement
