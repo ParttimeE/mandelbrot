@@ -9,36 +9,57 @@
 <body>
 
   <div class="controller-container">
-    <label for="MaxInterations">MaxInterations</label>
-    <input id="MaxInterations" type="number" step="50" min="0">
-    <label for="zoomFactor" min="0">Zoom Factor</label>
-    <input id="zoomFactor" type="number" value="1.2">
+    <div>
+      <div>
+        <label for="MaxInterations">MaxInterations</label> 
+        <input id="MaxInterations" type="number" step="50" max="1000" min="0">
+      </div>
+      <div>
+        <label for="zoomFactor" min="0" max="100">Zoom Factor</label> 
+        <input id="zoomFactor" type="number" value="1.2">
+      </div>
+    </div>
 
-    <label for="backgroundConfigurations">Background Color</label>
-    <div id="backgroundConfigurations" classname="backgroundConfigurations">
-      <input id="backgroundRed" type="number" min="0" max="255" value="0">
-      <label for="backgroundRed">R</label>
-      
+    
+    <div id="backgroundConfigurations" class="colorChange">
+      <label for="backgroundConfigurations">Background Color</label>
+      <div>
+        <label for="backgroundRed">R</label> 
+        <input id="backgroundRed" type="number" min="0" max="255" value="0">
+      </div>
+
+      <div>
+      <label for="backgroundGreen">G</label> 
       <input id="backgroundGreen" type="number" min="0" max="255" value="0">
-      <label for="backgroundGreen">G</label>
+      </div>
       
-      <input id="backgroundBlue" type="number" min="0" max="255" value="0">
-      <label for="backgroundBlue">B</label>
-     
+      <div>
+        <label for="backgroundBlue">B</label> 
+        <input id="backgroundBlue" type="number" min="0" max="255" value="0">
+      </div>
     </div>
 
-    <div id="configureModuloColor">
-        <label for="activatModuloColor">Modulo Color Function</label>
-        <input type="checkbox" id="activatModuloColor">
-        <label for="red">Modulo Divider red</label>
-        <input id="red" type="number" max="255" value="3">
+    <div> 
+      <label for="activatModuloColor">Modulo Color Function</label>
+      <input type="checkbox" id="activatModuloColor">
+      <div id="configureModuloColor">
+          <div>
+            <label for="red">Divisor Red</label> 
+            <input id="red" type="number" max="255" value="3">
+          </div>
+          
+          <div>
+            <label for="green">Divisor green</label> 
+            <input id="green" type="number" max="255" value="5">
+          </div>
+          
+          <div>
+            <label for="blue">Divisor blue</label> 
+            <input id="blue" type="number" max="255" value="8">
+          </div>
+      </div>
+    </div> 
 
-        <label for="green">Modulo Divider green</label>
-        <input id="green" type="number" max="255" value="5">
-
-        <label for="blue">Modulo Divider blue</label>
-        <input id="blue" type="number" max="255" value="8">
-    </div>
   </div>
 </body>
 <script type="module" src="script.ts"></script>
