@@ -35,7 +35,6 @@ const pipeline =async (callback:any) =>{
 
 function updateHtml(newMandelbrot: Mandelbrot){
   currentMandelbrot = newMandelbrot
-  maxIterations.value = currentMandelbrot.parameter.maxIterations+""
   return newMandelbrot
 }
 
@@ -63,42 +62,33 @@ canvas.mandelbrotCanvas.addEventListener('click', function(event) {
   ,currentZoomSteps-1, currentZoomDelay)
 })
 
-maxIterations?.addEventListener("keypress", (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+maxIterations?.addEventListener("input", (event) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     changeMandelbrotParams({ maxIterations: +target.value });
-  }
 })
 
-zoomFactor?.addEventListener("keypress", (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+zoomFactor?.addEventListener("input", (event) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     currentZoomFactor = (+target.value) 
-  }
 })
 
-zoomSteps?.addEventListener("keypress", (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+zoomSteps?.addEventListener("input", (event) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     currentZoomSteps = (+target.value) 
-  }
 })
 
-zoomDelay?.addEventListener("keypress", (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+zoomDelay?.addEventListener("input", (event) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     currentZoomDelay = (+target.value) 
-  }
 })
 
 activateModuloColor?.addEventListener('change', function() {
   if (activateModuloColor && activateModuloColor.checked) {
     currentColorFunction = getColorFnWithBackground(getModuloColorCalculation(+red.value,+blue.value,+green.value))
-    console.log(backgroundColor)
     changeMandelbrotParams({ getColorFn: currentColorFunction(backgroundColor)});
   } else {
     currentColorFunction = getColorFnWithBackground(normalColorCalculation)
@@ -117,30 +107,26 @@ canvas.mandelbrotCanvas?.addEventListener("contextmenu", (event: MouseEvent) => 
   ,currentZoomSteps-1, currentZoomDelay)
 })
 
-const handleKeyPress = (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+const handleKeyPress = (event:any) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     changeMandelbrotParams({
       getColorFn: getColorFnWithBackground(getModuloColorCalculation(+red.value, +green.value,+blue.value))(backgroundColor)
     });
-  }
-};
+}
 
-const handleBackGroundColorChange = (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+
+const handleBackGroundColorChange = (event:any) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
-    console.log(currentColorFunction)
     backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
     changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
-  }
 };
 
-red.addEventListener("keypress", handleKeyPress);
-green.addEventListener("keypress", handleKeyPress);
-blue.addEventListener("keypress", handleKeyPress);
+red.addEventListener("input", handleKeyPress);
+green.addEventListener("input", handleKeyPress);
+blue.addEventListener("input", handleKeyPress);
 
-backgroundRed.addEventListener("keypress", handleBackGroundColorChange);
-backgroundBlue.addEventListener("keypress", handleBackGroundColorChange);
-backgroundGreen.addEventListener("keypress", handleBackGroundColorChange);
+backgroundRed.addEventListener("input", handleBackGroundColorChange);
+backgroundBlue.addEventListener("input", handleBackGroundColorChange);
+backgroundGreen.addEventListener("input", handleBackGroundColorChange);
