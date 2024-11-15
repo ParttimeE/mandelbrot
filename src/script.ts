@@ -10,14 +10,9 @@ const blue = document.getElementById("blue") as HTMLInputElement
 const backgroundRed = document.getElementById("backgroundRed") as HTMLInputElement
 const backgroundGreen = document.getElementById("backgroundGreen") as HTMLInputElement
 const backgroundBlue= document.getElementById("backgroundBlue") as HTMLInputElement
-const maxReal = document.getElementById("MaxReal") as HTMLInputElement
-const minReal = document.getElementById("MinReal") as HTMLInputElement
-const maxImg = document.getElementById("MaxImg") as HTMLInputElement
-const minImg = document.getElementById("MinImg") as HTMLInputElement
 const maxIterations = document.getElementById("MaxInterations") as HTMLInputElement
 const zoomFactor = document.getElementById("zoomFactor") as HTMLInputElement
 const activateModuloColor = document.getElementById("activatModuloColor") as HTMLInputElement
-const mirrorCanvas = document.getElementById("mirrorCanvas")
 
 let currentZoomFactor = 1.2
 let backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
@@ -30,10 +25,6 @@ let currentMandelbrot:Mandelbrot = drawMandelbrot({
 function updateHtml(newMandelbrot: Mandelbrot){
   currentMandelbrot = newMandelbrot
   maxIterations.value = currentMandelbrot.parameter.maxIterations+""
-  maxImg.value = currentMandelbrot.parameter.maxImaginaryPart+""
-  minImg.value = currentMandelbrot.parameter.minImaginaryPart+""
-  maxReal.value = currentMandelbrot.parameter.minRealPart+""
-  minReal.value = currentMandelbrot.parameter.minRealPart+""
   return newMandelbrot
 }
 
@@ -46,6 +37,14 @@ function changeMandelbrotParams(change: Record<string,any>| null){
 updateHtml(currentMandelbrot)
 
 canvas.mandelbrotCanvas.addEventListener('click', function(event) {
+  const rect = canvas.mandelbrotCanvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  enterFullscreen()
+  updateHtml(zoom({factor: currentZoomFactor, xPosition:x, yPosition:y}, currentMandelbrot.parameter,currentMandelbrot.canvas))
+})
+
+canvas.mandelbrotCanvas.addEventListener('dblclick', function(event) {
   const rect = canvas.mandelbrotCanvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
@@ -71,22 +70,14 @@ zoomFactor?.addEventListener("keypress", (event: KeyboardEvent) => {
 
 activateModuloColor?.addEventListener('change', function() {
   if (activateModuloColor && activateModuloColor.checked) {
-    red.value = 3+""
-    blue.value = 9+""
-    green.value = 7+""
-    currentColorFunction = getColorFnWithBackground(getModuloColorCalculation(3,7,9))
+    currentColorFunction = getColorFnWithBackground(getModuloColorCalculation(+red.value,+blue.value,+green.value))
+    console.log(backgroundColor)
     changeMandelbrotParams({ getColorFn: currentColorFunction(backgroundColor)});
   } else {
     currentColorFunction = getColorFnWithBackground(normalColorCalculation)
-      changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
+    changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
   }
 });
-
-mirrorCanvas?.addEventListener("click",()=>{
-  updateHtml(zoom({factor: -1*Math.sign(currentZoomFactor), xPosition:500, yPosition:500}, currentMandelbrot.parameter,currentMandelbrot.canvas))
-  currentZoomFactor *= -1
-})
-
 
 canvas.mandelbrotCanvas?.addEventListener("contextmenu", (event: MouseEvent) => {
   event.preventDefault(); 
@@ -98,7 +89,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
     changeMandelbrotParams({
-      getColorFn: getModuloColorCalculation(+red.value, +green.value,+blue.value)
+      getColorFn: getColorFnWithBackground(getModuloColorCalculation(+red.value, +green.value,+blue.value))(backgroundColor)
     });
   }
 };
@@ -107,6 +98,7 @@ const handleBackGroundColorChange = (event: KeyboardEvent) => {
   if (event.key === "Enter") {
     const target = event.target as HTMLInputElement;
     if (!target || !target.value) return;
+    console.log(currentColorFunction)
     backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
     changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
   }
