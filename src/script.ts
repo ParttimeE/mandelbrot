@@ -2,7 +2,7 @@ import { normalColorCalculation, getModuloColorCalculation, getColorFnWithBackgr
 import { initialMandelbrotParams } from "./data";
 import { MandelbrotParams} from "./mandelbrot";
 import { calculateAndDrawMandelbrot, createCanvas, zoomAndDrawMandelbrot } from "./mandelbrotUI";
-import { doXTimesEveryYms, enterFullscreen } from "./utils";
+import { delay, doXTimesEveryYms, enterFullscreen } from "./utils";
 
 const canvas = createCanvas(1000, 1000)
 const red = document.getElementById("red") as HTMLInputElement
@@ -20,15 +20,15 @@ const activateModuloColor = document.getElementById("activatModuloColor") as HTM
 let controller = new AbortController();
 let currentMaxInterations = +maxIterations.value
 let signal = controller.signal;
-let currentZoomFactor = +zoomFactor.value
-let currentZoomSteps = +zoomSteps.value
-let currentZoomDelay = +zoomDelay.value
+let currentZoomOptions = {factor: +zoomFactor.value,steps:+zoomSteps.value,delay: +zoomDelay.value}
 let backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
 let currentColorFunction = getColorFnWithBackground(normalColorCalculation)
 let currentMandelbrot:MandelbrotParams = calculateAndDrawMandelbrot(canvas,
   {...initialMandelbrotParams,maxIterations:currentMaxInterations, getColorFn: currentColorFunction(backgroundColor), imageData: canvas.imageData, width:canvas.canvas.width, height: canvas.canvas.height})
-let waitingMandelBrot = new Promise<boolean>((r)=>{r(true)})
 
+
+//searching for smarter way
+let waitingMandelBrot = new Promise<boolean>((r)=>{r(true)})
 const pipeline =async (callback:any) =>{
   if(await waitingMandelBrot.then()){
     waitingMandelBrot = new Promise<boolean> ((resolve)=>{callback(); resolve(true)})
@@ -46,16 +46,14 @@ function changeMandelbrotParams(change: Record<string,any>| null){
   pipeline(()=>updateHtml(calculateAndDrawMandelbrot(canvas,newParams)))
 }
 
-updateHtml(currentMandelbrot)
-
 canvas.canvas.addEventListener('click', function(event) {
   const rect = canvas.canvas.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   enterFullscreen()
   controller.abort()
-  const zoomFN = ()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: currentZoomFactor, xPosition:x, yPosition:y}, currentMandelbrot,canvas)))
-  if(currentZoomSteps == 1)
+  const zoomFN = ()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: currentZoomOptions.factor, xPosition:x, yPosition:y}, currentMandelbrot,canvas)))
+  if(currentZoomOptions.steps == 1)
   {
   zoomFN()
   return
@@ -63,33 +61,35 @@ canvas.canvas.addEventListener('click', function(event) {
   zoomFN()
   controller = new AbortController()
   signal = controller.signal
-  doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: currentZoomFactor, xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
-  ,currentZoomSteps-1, currentZoomDelay,signal)
+  doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: currentZoomOptions.factor, xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
+  ,currentZoomOptions.steps-1, currentZoomOptions.delay,signal)
+})
+
+canvas.canvas?.addEventListener("contextmenu", (event: MouseEvent) => {
+  event.preventDefault(); 
+  const reversedZoomFactor = 1/currentZoomOptions.factor
+  controller.abort()
+  if(currentZoomOptions.steps == 1)
+  {
+    pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: reversedZoomFactor, xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
+  }
+  controller = new AbortController()
+  signal = controller.signal
+  doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: reversedZoomFactor , xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
+  ,currentZoomOptions.steps-1, currentZoomOptions.delay,signal)
 })
 
 maxIterations?.addEventListener("input", (event) => {
-    const target = event.target as HTMLInputElement;
-    if (!target || !target.value) return;
-    changeMandelbrotParams({ maxIterations: +target.value });
+  const target = event.target as HTMLInputElement;
+  if (!target || !target.value) return;
+  changeMandelbrotParams({ maxIterations: +target.value });
 })
 
-zoomFactor?.addEventListener("input", (event) => {
-    const target = event.target as HTMLInputElement;
-    if (!target || !target.value) return;
-    currentZoomFactor = (+target.value) 
-})
-
-zoomSteps?.addEventListener("input", (event) => {
-    const target = event.target as HTMLInputElement;
-    if (!target || !target.value) return;
-    currentZoomSteps = (+target.value) 
-})
-
-zoomDelay?.addEventListener("input", (event) => {
-    const target = event.target as HTMLInputElement;
-    if (!target || !target.value) return;
-    currentZoomDelay = (+target.value) 
-})
+const updateZoomOptions = (event:any) => {
+  const target = event.target as HTMLInputElement;
+  if (!target || !target.value) return;
+  currentZoomOptions = {factor: +zoomFactor.value,steps:+zoomSteps.value,delay: +zoomDelay.value}
+}
 
 activateModuloColor?.addEventListener('change', function() {
   if (activateModuloColor && activateModuloColor.checked) {
@@ -100,20 +100,6 @@ activateModuloColor?.addEventListener('change', function() {
     changeMandelbrotParams({getColorFn:currentColorFunction(backgroundColor)})
   }
 });
-
-canvas.canvas?.addEventListener("contextmenu", (event: MouseEvent) => {
-  event.preventDefault(); 
-  const reversedZoomFactor = 1/currentZoomFactor
-  controller.abort()
-  if(currentZoomSteps == 1)
-  {
-    pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: reversedZoomFactor, xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
-  }
-  controller = new AbortController()
-  signal = controller.signal
-  doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: reversedZoomFactor , xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
-  ,currentZoomSteps-1, currentZoomDelay,signal)
-})
 
 const handleKeyPress = (event:any) => {
     const target = event.target as HTMLInputElement;
@@ -137,3 +123,7 @@ blue.addEventListener("input", handleKeyPress);
 backgroundRed.addEventListener("input", handleBackGroundColorChange);
 backgroundBlue.addEventListener("input", handleBackGroundColorChange);
 backgroundGreen.addEventListener("input", handleBackGroundColorChange);
+
+zoomDelay.addEventListener("input",updateZoomOptions)
+zoomSteps.addEventListener("input",updateZoomOptions)
+zoomFactor.addEventListener("input",updateZoomOptions)
