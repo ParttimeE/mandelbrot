@@ -15,3 +15,11 @@ export async function doXTimesEveryYms(callback: () => any, Xtime: number, Ydela
   if(!signal.aborted){
   doXTimesEveryYms(callback,Xtime-1,Ydelay,signal)}
 }
+
+export async function doXTimesEveryYmsControlled(callback: () => any, Xtime: number, Ydelay: number, signal: AbortSignal, controller: AbortController) {
+  if(Xtime == 0) {controller.abort; return}
+  callback()
+  await delay(Ydelay)
+  if(!signal.aborted){
+  doXTimesEveryYmsControlled(callback,Xtime-1,Ydelay,signal,controller)}
+}
