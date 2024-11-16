@@ -106,3 +106,16 @@ export function calculateMandelbrot(parameter: MandelbrotParams):MandelbrotParam
   }
   return {...parameter,imageData:imageData};
 }
+
+
+// Shit could happen because now it would be more async 
+// self.onmessage = function(event) {
+//   const { type, data } = event.data
+//   if(type=="zoom"){
+//     const [zoomParameter, parameter] = data
+//     postMessage(zoomParameter,parameter)
+//   }
+//   if(type=="calculate"){
+//     postMessage(calculateMandelbrot(data.parameter))
+//   }
+// }
