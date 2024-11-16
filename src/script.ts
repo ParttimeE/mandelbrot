@@ -16,6 +16,8 @@ const zoomSteps = document.getElementById("zoomSteps") as HTMLInputElement
 const zoomDelay = document.getElementById("zoomDelay") as HTMLInputElement
 const activateModuloColor = document.getElementById("activatModuloColor") as HTMLInputElement
 
+let controller = new AbortController();
+let signal = controller.signal;
 let currentZoomFactor = 1.2
 let currentZoomSteps = 1
 let currentZoomDelay = 1000
@@ -51,6 +53,7 @@ canvas.mandelbrotCanvas.addEventListener('click', function(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   enterFullscreen()
+  controller.abort()
   const zoomFN = ()=>pipeline(()=>updateHtml(zoom({factor: currentZoomFactor, xPosition:x, yPosition:y}, currentMandelbrot.parameter,currentMandelbrot.canvas)))
   if(currentZoomSteps == 1)
   {
@@ -58,8 +61,10 @@ canvas.mandelbrotCanvas.addEventListener('click', function(event) {
   return
   }
   zoomFN()
+  controller = new AbortController()
+  signal = controller.signal
   doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoom({factor: currentZoomFactor, xPosition:500, yPosition:500}, currentMandelbrot.parameter,currentMandelbrot.canvas)))
-  ,currentZoomSteps-1, currentZoomDelay)
+  ,currentZoomSteps-1, currentZoomDelay,signal)
 })
 
 maxIterations?.addEventListener("input", (event) => {
@@ -99,12 +104,15 @@ activateModuloColor?.addEventListener('change', function() {
 canvas.mandelbrotCanvas?.addEventListener("contextmenu", (event: MouseEvent) => {
   event.preventDefault(); 
   const reversedZoomFactor = 1/currentZoomFactor
+  controller.abort()
   if(currentZoomSteps == 1)
   {
     pipeline(()=>updateHtml(zoom({factor: reversedZoomFactor, xPosition:500, yPosition:500}, currentMandelbrot.parameter,currentMandelbrot.canvas)))
   }
+  controller = new AbortController()
+  signal = controller.signal
   doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoom({factor: reversedZoomFactor , xPosition:500, yPosition:500}, currentMandelbrot.parameter,currentMandelbrot.canvas)))
-  ,currentZoomSteps-1, currentZoomDelay)
+  ,currentZoomSteps-1, currentZoomDelay,signal)
 })
 
 const handleKeyPress = (event:any) => {

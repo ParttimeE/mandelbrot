@@ -8,9 +8,10 @@ export function delay(ms: number | undefined) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function doXTimesEveryYms(callback: ()=>any, Xtime: number, Ydelay: number) {
+export async function doXTimesEveryYms(callback: () => any, Xtime: number, Ydelay: number, signal: AbortSignal) {
   if(Xtime == 0)return
   callback()
   await delay(Ydelay)
-  doXTimesEveryYms(callback,Xtime-1,Ydelay)
+  if(!signal.aborted){
+  doXTimesEveryYms(callback,Xtime-1,Ydelay,signal)}
 }
