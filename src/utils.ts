@@ -16,6 +16,8 @@ export async function doXTimesEveryYms(callback: () => any, Xtime: number, Ydela
   doXTimesEveryYms(callback,Xtime-1,Ydelay,signal)}
 }
 
+
+//Could be used later
 export async function doXTimesEveryYmsControlled(callback: () => any, Xtime: number, Ydelay: number, signal: AbortSignal, controller: AbortController) {
   if(Xtime == 0) {controller.abort; return}
   callback()
