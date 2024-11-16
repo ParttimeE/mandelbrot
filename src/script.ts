@@ -18,14 +18,15 @@ const zoomDelay = document.getElementById("zoomDelay") as HTMLInputElement
 const activateModuloColor = document.getElementById("activatModuloColor") as HTMLInputElement
 
 let controller = new AbortController();
+let currentMaxInterations = +maxIterations.value
 let signal = controller.signal;
-let currentZoomFactor = 1.2
-let currentZoomSteps = 1
-let currentZoomDelay = 1000
+let currentZoomFactor = +zoomFactor.value
+let currentZoomSteps = +zoomSteps.value
+let currentZoomDelay = +zoomDelay.value
 let backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
 let currentColorFunction = getColorFnWithBackground(normalColorCalculation)
 let currentMandelbrot:MandelbrotParams = calculateAndDrawMandelbrot(canvas,
-  {...initialMandelbrotParams, getColorFn: currentColorFunction(backgroundColor), imageData: canvas.imageData, width:canvas.canvas.width, height: canvas.canvas.height})
+  {...initialMandelbrotParams,maxIterations:currentMaxInterations, getColorFn: currentColorFunction(backgroundColor), imageData: canvas.imageData, width:canvas.canvas.width, height: canvas.canvas.height})
 let waitingMandelBrot = new Promise<boolean>((r)=>{r(true)})
 
 const pipeline =async (callback:any) =>{
