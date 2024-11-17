@@ -1,4 +1,4 @@
-import { calculateMandelbrot, CanvasContext, MandelbrotParams, zoom, ZoomParameter } from "./mandelbrot";
+import { calculateMandelbrot, CanvasContext, MandelbrotParams, zoom, ZoomParameter } from './mandelbrotCalculations'
 
 export function createCanvas(width: number, height: number): CanvasContext {
   const canvas: HTMLCanvasElement = document.createElement("canvas");

@@ -1,6 +1,6 @@
 import { normalColorCalculation, getModuloColorCalculation, getColorFnWithBackground } from "./colorFn";
-import { MandelbrotParams } from "./mandelbrot";
-import { calculateAndDrawMandelbrot, createCanvas, zoomAndDrawMandelbrot } from "./mandelbrotUI";
+import { MandelbrotParams } from "./mandelbrotCalculations";
+import { calculateAndDrawMandelbrot, createCanvas, zoomAndDrawMandelbrot } from "./mandelbrotCanvas";
 import { doXTimesEveryYms, enterFullscreen } from "./utils";
 
 // HTML Elements
