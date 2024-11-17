@@ -1,5 +1,4 @@
 import { normalColorCalculation, getModuloColorCalculation, getColorFnWithBackground } from "./colorFn";
-import { initialMandelbrotParams } from "./data";
 import { MandelbrotParams } from "./mandelbrot";
 import { calculateAndDrawMandelbrot, createCanvas, zoomAndDrawMandelbrot } from "./mandelbrotUI";
 import { doXTimesEveryYms, enterFullscreen } from "./utils";
@@ -30,7 +29,10 @@ let currentColorFunction = getColorFnWithBackground(normalColorCalculation);
 // Initial Canvas Setup and controller
 const canvas = createCanvas(1000, 1000);
 const initialMandelbrot: MandelbrotParams = { 
-  ...initialMandelbrotParams,
+  maxRealPart: 1,
+  minRealPart: -2,
+  maxImaginaryPart: 1.5,
+  minImaginaryPart: -1.5,
   maxIterations: currentMaxIterations, 
   getColorFn: currentColorFunction(backgroundColor), 
   imageData: canvas.imageData, 
