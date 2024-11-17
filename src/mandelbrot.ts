@@ -1,8 +1,7 @@
 export interface CanvasContext {
   canvas: HTMLCanvasElement;
   drawingContext: CanvasRenderingContext2D;
-  imageData: ImageData,
-
+  imageData: ImageData;
 }
 
 export interface ComplexNumber {
@@ -16,10 +15,10 @@ export interface MandelbrotParams {
   minRealPart: number;
   maxImaginaryPart: number;
   minImaginaryPart: number;
-  height: number,
-  width: number,
-  imageData: ImageData,
-  getColorFn: (interations:number,maxIterations:number)=>{r:number,g:number,b:number}
+  height: number;
+  width: number;
+  imageData: ImageData;
+  getColorFn: (iterations: number, maxIterations: number) => { r: number, g: number, b: number };
 }
 
 export interface Mandelbrot {
@@ -28,16 +27,17 @@ export interface Mandelbrot {
 }
 
 export interface ZoomParameter {
-  factor: number,
-  xPosition:number, 
-  yPosition:number,
+  factor: number;
+  xPosition: number;
+  yPosition: number;
 }
 
 export function zoom(zoomParameter: ZoomParameter, parameter: MandelbrotParams): MandelbrotParams {
-  const { maxIterations, maxRealPart, minRealPart, maxImaginaryPart, minImaginaryPart, getColorFn,width,height} = parameter;
+  const { maxIterations, maxRealPart, minRealPart, maxImaginaryPart, minImaginaryPart, getColorFn, width, height } = parameter;
   const { factor, xPosition, yPosition } = zoomParameter;
 
-  if(factor == 0) return parameter
+  if (factor === 0) return parameter;
+
   const middleReal = minRealPart + (maxRealPart - minRealPart) * (xPosition / width);
   const middleImag = minImaginaryPart + (maxImaginaryPart - minImaginaryPart) * (yPosition / height);
 
@@ -56,13 +56,11 @@ export function zoom(zoomParameter: ZoomParameter, parameter: MandelbrotParams):
     minRealPart: newMinRealPart,
     maxImaginaryPart: newMaxImaginaryPart,
     minImaginaryPart: newMinImaginaryPart,
-    getColorFn: getColorFn
-  })
+    getColorFn,
+  });
 }
 
-
-
-function calculateInterationsPerPixel(c: ComplexNumber, maxIterations: number): number {
+function calculateIterationsPerPixel(c: ComplexNumber, maxIterations: number): number {
   let z = { realPart: 0, imaginaryPart: 0 };
   let iterations = 0;
 
@@ -83,26 +81,27 @@ function calculateInterationsPerPixel(c: ComplexNumber, maxIterations: number): 
   return maxIterations;
 }
 
-export function calculateMandelbrot(parameter: MandelbrotParams):MandelbrotParams {
-  const { maxIterations, maxRealPart, minRealPart, maxImaginaryPart, minImaginaryPart, getColorFn,width,height,imageData} = parameter;
+export function calculateMandelbrot(parameter: MandelbrotParams): MandelbrotParams {
+  const { maxIterations, maxRealPart, minRealPart, maxImaginaryPart, minImaginaryPart, getColorFn, width, height, imageData } = parameter;
   const stepWidth = (maxRealPart - minRealPart) / width;
   const stepHeight = (maxImaginaryPart - minImaginaryPart) / height;
-  const pixels= imageData.data
+  const pixels = imageData.data;
 
-  for (let yPixel = 0; yPixel < width; yPixel += 1) {
-    for (let xPixel = 0; xPixel < height; xPixel += 1) {
+  for (let yPixel = 0; yPixel < height; yPixel++) {  
+    for (let xPixel = 0; xPixel < width; xPixel++) {   
       const realPart = minRealPart + xPixel * stepWidth;
       const imaginaryPart = minImaginaryPart + yPixel * stepHeight;
       const complexNumber = { realPart, imaginaryPart };
 
-      const iterations = calculateInterationsPerPixel(complexNumber, maxIterations);
+      const iterations = calculateIterationsPerPixel(complexNumber, maxIterations); 
       const color = getColorFn(iterations, maxIterations);
       const pixelIndex = (yPixel * width + xPixel) * 4;
-      pixels[pixelIndex] = color.r
-      pixels[pixelIndex + 1] = color.g  
-      pixels[pixelIndex + 2] = color.b  
-      pixels[pixelIndex + 3] = 255; 
+      pixels[pixelIndex] = color.r;
+      pixels[pixelIndex + 1] = color.g;
+      pixels[pixelIndex + 2] = color.b;
+      pixels[pixelIndex + 3] = 255;
     }
   }
-  return {...parameter,imageData:imageData};
+
+  return { ...parameter, imageData };
 }
