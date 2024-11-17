@@ -25,33 +25,23 @@ let currentZoomOptions = {factor: +zoomFactor.value,steps:+zoomSteps.value,delay
 let backgroundColor = {r: +backgroundRed.value, g:+backgroundGreen.value, b:+backgroundBlue.value}
 let currentColorFunction = getColorFnWithBackground(normalColorCalculation)
 
-let currentMandelbrot:MandelbrotParams = calculateAndDrawMandelbrot(
-  canvas,
-  { ...initialMandelbrotParams,
-    maxIterations:currentMaxInterations, 
-    getColorFn: currentColorFunction(backgroundColor), 
-    imageData: canvas.imageData, 
-    width:canvas.canvas.width, 
-    height: canvas.canvas.height
-  }
-)
-
-let waitingMandelBrot = new Promise<boolean>((r)=>{r(true)})
-const pipeline =async (callback:any) =>{
-  if(await waitingMandelBrot.then()){
-    waitingMandelBrot = new Promise<boolean> ((resolve)=>{callback(); resolve(true)})
-  }
+const initialMandelbrot:MandelbrotParams = { 
+  ...initialMandelbrotParams,
+  maxIterations:currentMaxInterations, 
+  getColorFn: currentColorFunction(backgroundColor), 
+  imageData: canvas.imageData, 
+  width:canvas.canvas.width, 
+  height: canvas.canvas.height
 }
 
-function updateHtml(newMandelbrot: MandelbrotParams){
-  currentMandelbrot = newMandelbrot
-  return newMandelbrot
+let waitingMandelBrot =  calculateAndDrawMandelbrot(canvas,initialMandelbrot)
+
+const pipeline =async (callback:any) =>{
+  waitingMandelBrot =  waitingMandelBrot.then((prefMandelbrot)=>{return callback(prefMandelbrot)}) 
 }
 
 function changeMandelbrotParams(change: Record<string,any>| null){
-  if(!currentMandelbrot) return
-  const newParams: MandelbrotParams = {...currentMandelbrot,...change}
-  pipeline(()=>updateHtml(calculateAndDrawMandelbrot(canvas,newParams)))
+  pipeline((data:MandelbrotParams)=>calculateAndDrawMandelbrot(canvas, {...data,...change}))
 }
 
 canvas.canvas.addEventListener('click', function(event) {
@@ -60,7 +50,7 @@ canvas.canvas.addEventListener('click', function(event) {
   const y = event.clientY - rect.top;
   enterFullscreen()
   controller.abort()
-  const zoomFN = ()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: currentZoomOptions.factor, xPosition:x, yPosition:y}, currentMandelbrot,canvas)))
+  const zoomFN = ()=>pipeline((mandelbrotParams:MandelbrotParams)=>zoomAndDrawMandelbrot({factor: currentZoomOptions.factor, xPosition:x, yPosition:y}, mandelbrotParams,canvas))
   if(currentZoomOptions.steps == 1)
   {
   zoomFN()
@@ -69,8 +59,18 @@ canvas.canvas.addEventListener('click', function(event) {
   zoomFN()
   controller = new AbortController()
   signal = controller.signal
-  doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: currentZoomOptions.factor, xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
-  ,currentZoomOptions.steps-1, currentZoomOptions.delay,signal)
+  doXTimesEveryYms(()=>
+    pipeline((mandelbrotParams:MandelbrotParams)=>
+      zoomAndDrawMandelbrot(
+        {factor: currentZoomOptions.factor, xPosition:500, yPosition:500}
+        ,mandelbrotParams,
+        canvas
+      )
+    )
+  ,currentZoomOptions.steps-1, 
+  currentZoomOptions.delay,
+  signal
+  )
 })
 
 canvas.canvas?.addEventListener("contextmenu", (event: MouseEvent) => {
@@ -79,12 +79,22 @@ canvas.canvas?.addEventListener("contextmenu", (event: MouseEvent) => {
   controller.abort()
   if(currentZoomOptions.steps == 1)
   {
-    pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: reversedZoomFactor, xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
+    pipeline((mandelbrotParams:MandelbrotParams)=>zoomAndDrawMandelbrot({factor: reversedZoomFactor, xPosition:500, yPosition:500}, mandelbrotParams,canvas))
   }
   controller = new AbortController()
   signal = controller.signal
-  doXTimesEveryYms(()=>pipeline(()=>updateHtml(zoomAndDrawMandelbrot({factor: reversedZoomFactor , xPosition:500, yPosition:500}, currentMandelbrot,canvas)))
-  ,currentZoomOptions.steps-1, currentZoomOptions.delay,signal)
+  doXTimesEveryYms(()=>
+    pipeline((mandelbrotParams:MandelbrotParams)=>
+      zoomAndDrawMandelbrot(
+        {factor: reversedZoomFactor , xPosition:500, yPosition:500}
+        ,mandelbrotParams,
+        canvas
+      )
+    )
+  ,currentZoomOptions.steps-1, 
+  currentZoomOptions.delay,
+  signal
+  )
 })
 
 maxIterations?.addEventListener("input", (event) => {

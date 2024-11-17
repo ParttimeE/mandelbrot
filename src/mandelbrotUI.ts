@@ -16,12 +16,12 @@ export function drawMandelbrot(canvas:CanvasContext, parameter: MandelbrotParams
   return parameter
 }
 
-export function calculateAndDrawMandelbrot(canvas:CanvasContext, parameter: MandelbrotParams){
+export async function calculateAndDrawMandelbrot(canvas:CanvasContext, parameter: MandelbrotParams){
   const calculateteMandelBrot = calculateMandelbrot(parameter)
   return drawMandelbrot(canvas,calculateteMandelBrot)
 }
 
-export function zoomAndDrawMandelbrot(zoomParameter:ZoomParameter, parameter: MandelbrotParams, canvas:CanvasContext,){
+export async function zoomAndDrawMandelbrot(zoomParameter:ZoomParameter, parameter: MandelbrotParams, canvas:CanvasContext,){
   const calculateteMandelBrot = zoom(zoomParameter,parameter)
   return drawMandelbrot(canvas,calculateteMandelBrot)
 }
