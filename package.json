@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "cd calculations && wasm-pack build --target bundler && cd .. && vite build",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
