@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "cd calculations && wasm-pack build --target bundler && cd .. && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,8 @@
   "dependencies": {
     "vite": "^5.4.11",
     "vite-plugin-wasm": "^3.3.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.2.0"
   }
 }
