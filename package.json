@@ -4,7 +4,7 @@
   "main": "vite.config.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "cd calculations && wasm-pack build --target bundler && cd .. && vite build",
     "preview": "vite preview"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "vite": "^5.4.11"
+    "vite": "^5.4.11",
+    "vite-plugin-wasm": "^3.3.0"
   }
 }

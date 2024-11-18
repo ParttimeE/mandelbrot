@@ -1,12 +1,10 @@
+
+const calculations = await import('../calculations/pkg/calculations_bg.wasm');
+
 export interface CanvasContext {
   canvas: HTMLCanvasElement;
   drawingContext: CanvasRenderingContext2D;
   imageData: ImageData;
-}
-
-export interface ComplexNumber {
-  realPart: number;
-  imaginaryPart: number;
 }
 
 export interface MandelbrotParams {
@@ -60,26 +58,6 @@ export function zoom(zoomParameter: ZoomParameter, parameter: MandelbrotParams):
   });
 }
 
-function calculateIterationsPerPixel(c: ComplexNumber, maxIterations: number): number {
-  let z = { realPart: 0, imaginaryPart: 0 };
-  let iterations = 0;
-
-  while (iterations < maxIterations) {
-    const newRealPart = z.realPart * z.realPart - z.imaginaryPart * z.imaginaryPart + c.realPart;
-    const newImaginaryPart = 2 * z.realPart * z.imaginaryPart + c.imaginaryPart;
-
-    z.realPart = newRealPart;
-    z.imaginaryPart = newImaginaryPart;
-
-    if (z.realPart * z.realPart + z.imaginaryPart * z.imaginaryPart > 2) {
-      return iterations;
-    }
-
-    iterations++;
-  }
-
-  return maxIterations;
-}
 
 export function calculateMandelbrot(parameter: MandelbrotParams): MandelbrotParams {
   const { maxIterations, maxRealPart, minRealPart, maxImaginaryPart, minImaginaryPart, getColorFn, width, height, imageData } = parameter;
@@ -91,9 +69,8 @@ export function calculateMandelbrot(parameter: MandelbrotParams): MandelbrotPara
     for (let xPixel = 0; xPixel < width; xPixel++) {   
       const realPart = minRealPart + xPixel * stepWidth;
       const imaginaryPart = minImaginaryPart + yPixel * stepHeight;
-      const complexNumber = { realPart, imaginaryPart };
-
-      const iterations = calculateIterationsPerPixel(complexNumber, maxIterations); 
+      const complexNumber = calculations.new_complex_number(realPart,imaginaryPart)
+      const iterations =  calculations.calculate_iterations_per_pixel(complexNumber, maxIterations); 
       const color = getColorFn(iterations, maxIterations);
       const pixelIndex = (yPixel * width + xPixel) * 4;
       pixels[pixelIndex] = color.r;

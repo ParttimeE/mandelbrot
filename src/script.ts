@@ -3,6 +3,10 @@ import { MandelbrotParams } from "./mandelbrotCalculations";
 import { calculateAndDrawMandelbrot, createCanvas, zoomAndDrawMandelbrot } from "./mandelbrotCanvas";
 import { doXTimesEveryYms, enterFullscreen } from "./utils";
 
+// Canvas Initial 
+const canvasSize = 1000
+const halfCanvas = canvasSize/2
+
 // HTML Elements
 const red = document.getElementById("red") as HTMLInputElement;
 const green = document.getElementById("green") as HTMLInputElement;
@@ -27,7 +31,7 @@ let currentColorFunction = getColorFnWithBackground(normalColorCalculation);
 
 
 // Initial Canvas Setup and controller
-const canvas = createCanvas(1000, 1000);
+const canvas = createCanvas(canvasSize, canvasSize);
 const initialMandelbrot: MandelbrotParams = { 
   maxRealPart: 1,
   minRealPart: -2,
@@ -79,7 +83,7 @@ function multiZoom(zoomFactor: number): void {
   doXTimesEveryYms(() =>
     pipeline((mandelbrotParams: MandelbrotParams) => {
       return zoomAndDrawMandelbrot(
-        { factor: zoomFactor, xPosition: 500, yPosition: 500 },
+        { factor: zoomFactor, xPosition: halfCanvas, yPosition: halfCanvas },
         mandelbrotParams,
         canvas
       );
