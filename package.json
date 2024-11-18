@@ -4,7 +4,7 @@
   "main": "vite.config.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "cd calculations && wasm-pack build --target bundler && cd .. && vite build",
     "preview": "vite preview"
   },
   "keywords": [],
