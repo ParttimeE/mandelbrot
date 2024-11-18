@@ -4,7 +4,7 @@ import { calculateAndDrawMandelbrot, createCanvas, zoomAndDrawMandelbrot } from 
 import { doXTimesEveryYms, enterFullscreen } from "./utils";
 
 // Canvas Initial 
-const canvasSize = 1200
+const canvasSize = 1000
 const halfCanvas = canvasSize/2
 
 // HTML Elements
