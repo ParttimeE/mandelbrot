@@ -36,16 +36,20 @@ export function zoom(zoomParameter: ZoomParameter, parameter: MandelbrotParams):
 
   if (factor === 0) return parameter;
 
-  const middleReal = minRealPart + (maxRealPart - minRealPart) * (xPosition / width);
-  const middleImag = minImaginaryPart + (maxImaginaryPart - minImaginaryPart) * (yPosition / height);
-
-  const deltaReal = Math.abs(maxRealPart - minRealPart) / factor;
-  const deltaImag = Math.abs(maxImaginaryPart - minImaginaryPart) / factor;
-
-  const newMinRealPart = middleReal - deltaReal / 2;
-  const newMaxRealPart = middleReal + deltaReal / 2;
-  const newMinImaginaryPart = middleImag - deltaImag / 2;
-  const newMaxImaginaryPart = middleImag + deltaImag / 2;
+  const x = maxRealPart - minRealPart;
+  const y = maxImaginaryPart - minImaginaryPart;
+  const factorReciprocal = 1 / factor;
+  
+  const middleReal = minRealPart + x * (xPosition / width);
+  const middleImag = minImaginaryPart + y * (yPosition / height);
+  
+  const deltaReal = (x * factorReciprocal) * 0.5;
+  const deltaImag = (y * factorReciprocal) * 0.5;
+  
+  const newMinRealPart = middleReal - deltaReal;
+  const newMaxRealPart = middleReal + deltaReal;
+  const newMinImaginaryPart = middleImag - deltaImag;
+  const newMaxImaginaryPart = middleImag + deltaImag;
 
   return calculateMandelbrot({
     ...parameter,
