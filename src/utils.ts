@@ -9,9 +9,9 @@ export function delay(ms: number | undefined) {
 }
 
 export async function doXTimesEveryYms(callback: () => any, Xtime: number, Ydelay: number, signal: AbortSignal) {
-  if(Xtime == 0)return
-  callback()
-  await delay(Ydelay)
-  if(!signal.aborted){
-  doXTimesEveryYms(callback,Xtime-1,Ydelay,signal)}
+  for (let count = 0; count < Xtime && !signal.aborted; count++) {
+    callback();
+    await delay(Ydelay);
+  } 
+  return
 }
