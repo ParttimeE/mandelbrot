@@ -66,19 +66,18 @@ export function calculateMandelbrot(parameter: MandelbrotParams): MandelbrotPara
   const pixels = imageData.data;
 
   for (let yPixel = 0; yPixel < height; yPixel++) {  
-    for (let xPixel = 0; xPixel < width; xPixel++) {   
+    const imaginaryPart = minImaginaryPart + yPixel * stepHeight;
+    const yPixelIndex = yPixel * width * 4
+    for (let xPixel = 0; xPixel < width; xPixel++) {  
       const realPart = minRealPart + xPixel * stepWidth;
-      const imaginaryPart = minImaginaryPart + yPixel * stepHeight;
-      const complexNumber = calculations.new_complex_number(realPart,imaginaryPart)
-      const iterations =  calculations.calculate_iterations_per_pixel(complexNumber, maxIterations); 
-      const color = getColorFn(iterations, maxIterations);
-      const pixelIndex = (yPixel * width + xPixel) * 4;
-      pixels[pixelIndex] = color.r;
-      pixels[pixelIndex + 1] = color.g;
-      pixels[pixelIndex + 2] = color.b;
+      const iterations =  calculations.calculate_iterations_per_pixel(realPart,imaginaryPart, maxIterations); 
+      const { r, g, b }  = getColorFn(iterations, maxIterations);
+      const pixelIndex = yPixelIndex + xPixel*4 ;
+      pixels[pixelIndex] = r;
+      pixels[pixelIndex + 1] = g;
+      pixels[pixelIndex + 2] = b;
       pixels[pixelIndex + 3] = 255;
     }
   }
-
   return { ...parameter, imageData };
 }
