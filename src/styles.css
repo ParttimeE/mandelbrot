@@ -59,11 +59,11 @@ html, body{
   cursor:crosshair
 }
 
-#activatModuloColor ~ #configureModuloColor{
+#activateModuloColor ~ #configureModuloColor{
   display: none ;
 }
 
-#activatModuloColor:checked ~ #configureModuloColor{
+#activateModuloColor:checked ~ #configureModuloColor{
   display:flex
 }
 
